@@ -238,12 +238,14 @@ def download(from_, config, delete_on_success, proxy, split_files, interactive):
 @click.option('--config', default=None, help='Configuration file to use. By default "{}".'.format(CONFIG_FILE))
 @click.option('-pm', '--parse_mode', default=None,
                 help='Parse mode for the message. Options: "text", "markdown", "html". By default "text" or None.')
+@click.option('-f', '--forward', multiple=True, help='Forward the file to a chat (alias or id) or user (username, '
+                                                     'mobile or id). This option can be used multiple times.')
 @click.option('-p', '--proxy', default=None,
                 help='Use an http proxy, socks4, socks5 or mtproxy. For example socks5://user:pass@1.2.3.4:8080 '
                     'for socks5 and mtproxy://secret@1.2.3.4:443 for mtproxy.')
 @click.option('-i', '--interactive', is_flag=True,
                 help='Use interactive mode.')
-def message(messages, to, config, forward, proxy, interactive):
+def message(messages, to, config, parse_mode, proxy, interactive, forward):
     """Send messages to a chat or user."""
     client = TelegramManagerClient(config or default_config(), proxy=proxy)
     client.start()
@@ -255,6 +257,8 @@ def message(messages, to, config, forward, proxy, interactive):
         if parse_mode not in ('text', 'markdown', 'html'):
             click.echo('Invalid parse mode. Options: "text", "markdown", "html".')
             parse_mode = None
+        if parse_mode == 'text':
+            parse_mode = None
     else:
         parse_mode = None
     if interactive and not to:
@@ -265,7 +269,7 @@ def message(messages, to, config, forward, proxy, interactive):
         to = 'me'
     if isinstance(to, str) and to.lstrip("-+").isdigit():
         to = int(to)
-    client.send_messages(to, messages, parse_mode)
+    client.send_messages(to, messages, parse_mode, forward)
 
 upload_cli = catch(upload)
 download_cli = catch(download)
