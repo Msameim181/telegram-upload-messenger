@@ -73,6 +73,11 @@ downloaded until the last text message.
 
     $ telegram-download
 
+You can also **send messages** only to your saved messages or to a specific chat:
+.. code-block:: console
+
+    $ telegram-message "Hello, world!"
+
 `Read the documentation <https://docs.nekmo.org/telegram-upload/usage.html#telegram-download>`_ for more info about the
 options availables.
 
@@ -85,6 +90,7 @@ a **terminal 🪄 wizard**. It even **supports mouse**!
 
     $ telegram-upload --interactive    # Interactive upload
     $ telegram-download --interactive  # Interactive download
+    $ telegram-message --interactive   # Interactive message
 
 `More info in the documentation <https://docs.nekmo.org/telegram-upload/usage.html#interactive-mode>`_
 

@@ -17,7 +17,7 @@ PACKAGE_DOWNLOAD_URL = 'https://github.com/Nekmo/telegram-upload/archive/master.
 MODULE = 'telegram_upload'
 REQUIREMENT_FILE = 'requirements.txt'
 STATUS_LEVEL = 5  # 1:Planning 2:Pre-Alpha 3:Alpha 4:Beta 5:Production/Stable 6:Mature 7:Inactive
-KEYWORDS = ['telegram-upload', 'telegram', 'upload', 'video']
+KEYWORDS = ['telegram-upload', 'telegram', 'upload', 'video', 'messenger', 'file', 'bot']
 LICENSE = 'MIT license'
 
 CLASSIFIERS = [  # https://github.com/github/choosealicense.com/tree/gh-pages/_licenses
@@ -40,7 +40,7 @@ PLATFORMS = [
     # 'ios'
     # 'android'
 ]
-PYTHON_VERSIONS = ['3.7-3.9', '3.10', '3.11']
+PYTHON_VERSIONS = ['3.7-3.9', '3.10', '3.11', '3.12']
 
 
 def read_requirement_file(path):
@@ -140,6 +140,7 @@ setup(
         "console_scripts": [
             "telegram-upload = telegram_upload.management:upload_cli",
             "telegram-download = telegram_upload.management:download_cli",
+            "telegram-message = telegram_upload.management:message_cli",
         ],
     },
 

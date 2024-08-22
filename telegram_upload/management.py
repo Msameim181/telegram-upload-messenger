@@ -231,15 +231,52 @@ def download(from_, config, delete_on_success, proxy, split_files, interactive):
     client.download_files(from_, download_files, delete_on_success)
 
 
+@click.command()
+@click.argument('messages', nargs=-1)
+@click.option('--to', default=None, help='Phone number, username, invite link or "me" (saved messages). '
+                                        'By default "me".')
+@click.option('--config', default=None, help='Configuration file to use. By default "{}".'.format(CONFIG_FILE))
+@click.option('-pm', '--parse_mode', default=None,
+                help='Parse mode for the message. Options: "text", "markdown", "html". By default "text" or None.')
+@click.option('-p', '--proxy', default=None,
+                help='Use an http proxy, socks4, socks5 or mtproxy. For example socks5://user:pass@1.2.3.4:8080 '
+                    'for socks5 and mtproxy://secret@1.2.3.4:443 for mtproxy.')
+@click.option('-i', '--interactive', is_flag=True,
+                help='Use interactive mode.')
+def message(messages, to, config, forward, proxy, interactive):
+    """Send messages to a chat or user."""
+    client = TelegramManagerClient(config or default_config(), proxy=proxy)
+    client.start()
+    if not messages:
+        click.echo('No messages to send. Should be at least one message within quotation marks.')
+        return
+    if parse_mode:
+        parse_mode = parse_mode.lower()
+        if parse_mode not in ('text', 'markdown', 'html'):
+            click.echo('Invalid parse mode. Options: "text", "markdown", "html".')
+            parse_mode = None
+    else:
+        parse_mode = None
+    if interactive and not to:
+        click.echo('Select the recipient dialog of the messages:')
+        click.echo('[SPACE] Select dialog [ENTER] Next step')
+        to = async_to_sync(interactive_select_dialog(client))
+    elif to is None:
+        to = 'me'
+    if isinstance(to, str) and to.lstrip("-+").isdigit():
+        to = int(to)
+    client.send_messages(to, messages, parse_mode)
+
 upload_cli = catch(upload)
 download_cli = catch(download)
+message_cli = catch(message)
 
 
 if __name__ == '__main__':
     import sys
     import re
     sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
-    commands = {'upload': upload_cli, 'download': download_cli}
+    commands = {'upload': upload_cli, 'download': download_cli, 'message': message_cli}
     if len(sys.argv) < 2:
         sys.stderr.write('A command is required. Available commands: {}\n'.format(
             ', '.join(commands)
